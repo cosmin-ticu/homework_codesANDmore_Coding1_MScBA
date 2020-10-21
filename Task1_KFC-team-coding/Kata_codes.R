@@ -14,7 +14,7 @@ pizza_data %>% select( online, price_pizza ) %>%
 
 # create ggplot for online vs offline prices: histogram
 ggplot( data = pizza_data, aes( x = price_pizza, fill = online ) ) +
-  geom_histogram( aes( y = ..density.. ), alpha = 0.4 ) +
-  labs( x = 'Price of Pizza', y = 'Relative frequency', fill = 'Online' )
-#  facet_wrap( ~country ) +
+  geom_histogram( alpha = 0.4 ) +
+  labs( x = 'Price of Pizza', y = 'Frequency', fill = 'Online' ) +
+  facet_wrap( ~online )
 #  xlim( -4, 4 )
