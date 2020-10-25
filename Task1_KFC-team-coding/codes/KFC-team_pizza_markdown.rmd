@@ -58,6 +58,7 @@ pizza_stat <- pizza_data %>% summarise(
 knitr::kable(pizza_stat,caption="Table 2: Descriptive statistics for sparkling water prices of pizzerias in Budapest")
 ```
 The average price of pizza margherita is 1958.25 HUF. As for the sparkiling water, the average price is 518.5 HUF. The mean is higher than the median in case of the pizza and the water as well, indicating a somewhat skewed distribution with a long right tail. I the next section, the distribution will be illustrated by histograms.
+
 ### Histograms of product prices (kernel density showcases skewness)
 The following plots describe the distribution of margherita pizza prices and sparkling water prices. 
 
@@ -113,15 +114,15 @@ ggplot( pizza_data, aes( x = online, y = price_pizza ) ) +
 ```
 
 ### Test of whether the online and offline prices of margherita pizza are the same
-The hypotheses are about whether the offline versus online price difference is zero on average in population of products represented by the data.
-* The null hypothesis is that online and offline prices of pizza margherita are the same in Budapest. 
-* The alternative hypothesis is that online and offline prices of pizza margherita are different in Budapest.
+The hypotheses are about whether the offline versus online price difference is zero on average in population of products represented by the data. The null hypothesis is that online and offline prices of pizza margherita are the same in Budapest. The alternative hypothesis is that online and offline prices of pizza margherita are different in Budapest.
 We fixed the level of significance at 5% then tested hypotheses.
 ```{r, '5' , echo=FALSE, fig.cap="Hypothesis Testing" , purl=FALSE}
-t.test(price_pizza ~ delivery, data = pizza_data)
-
+test <- t.test(price_pizza ~ delivery, data = pizza_data)
+print( paste0('P-value: ', round( test$p.value, 4 ) ) )
+print( paste0('T-statistic: ', round( test$statistic, 4 ) ) )
+print( paste0('Confidence Interval: ', round( test$conf.int, 1 ) ) )
 ```
-Based on the results above, the p-value is larger than the level of significance, so we cannot reject the null hypothesis. The t-statistic is within +/- 2, so we cannot reject the null hypothesis of zero difference. The CI shows values between -7 and and 542, so the difference between the online and offline prices can be zero. Thus, we can conclude that the offline and online prices of pizza margherita can be equal in Budapest.
+Based on the results above since the p-value is larger than the level of significance we cannot reject the null hypothesis. The t-statistic is within +/- 2, also the CI is between -7 and and 542, so the difference between the online and offline prices can be zero. Thus, we can conclude that the offline and online prices of pizza margherita can be equal in Budapest.
 
 ### Summary of findings regarding unconditional and conditional price distributions
 Based on the histograms of product prices it can be clearly seen that even though the price distribution for margherita pizza tends to have a few smaller modes, it closely resembles a normal distribution. With the help of binning, the distribution can be brought to look much closer like a normal distribution. The same cannot be said about the distribution of sparkling water prices, which showcases a heavy right skew, having a mean much higher than the median. This is perhaps caused by the large differences in sparkling water brands (from local Hungarian to expensive imported Italian water). As such, the range of products is much higher than with respect to the pizza. For further analysis, it would be worthwhile to inspect distributions of local sparkling water prices and imported water prices in separate graphs.
