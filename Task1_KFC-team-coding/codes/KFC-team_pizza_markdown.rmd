@@ -1,6 +1,4 @@
 ---
-author: "Budapest Pizza Report - KFC (Kata, Fanni, Cosmin) Team"
-date: 'October 25th, 2020'
 output: pdf_document
 ---
 
@@ -17,7 +15,8 @@ data_in <- "C:/Users/acer/Desktop/OneDrive - Central European University/Courses
 pizza_data <- read_excel( paste0(data_in,"/raw/KFC-team_pizza_data.xlsx") )
 ```
 
-The purpose of the report is to explore data about pizza prices in Budapest. The following repository contains the dataset, walkthrough explanation of the variables and the R codes used to create this descriptive analysis: [GitHub](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/tree/master/Task1_KFC-team-coding)
+The purpose of the report is to explore data about pizza prices in Budapest. It was created by the KFC (Kata, Fanni, Cosmin) Team for the Data Analysis 1 course.
+
 
 ### Data collection, difficulties & problems
 The KFC team chose to limit the data collection to the Budapest area, with on-site prices being gathered only within the inner city districts (i.e. 2, 5, 6, 7, 8, 9, 11, 13), while delivery prices were documented irrespective of inner city district limits. The Google Maps API was used in order to compile the list (custom Google Maps shared lists) of on-site locations, gather customer reviews and compute the travel time between the restaurant and CEU. The choice of 0.5L sparkling water was convened with the drawback that the distribution of prices, brands and mark-up would be more heterogeneous than with the margherita pizza.
@@ -26,7 +25,9 @@ Variables like district, address and restaurant were added for reference purpose
 
 ### Descriptive statistics for prices of margherita pizza and sparkling water
 ```{r, echo = FALSE, out.width='50%'}
+# summary statistics for the price_pizza variable
 pizza_stat <- pizza_data %>% summarise(
+  variable = 'price_pizza',
   n   = n(),
   Mean     = mean(price_pizza),
   Median   = median(price_pizza),
@@ -35,7 +36,10 @@ pizza_stat <- pizza_data %>% summarise(
   Min      = min(price_pizza),
   Max      = max(price_pizza),
   Skew     = skewness(price_pizza))
+
+# summary statistics for the price_swater variable
 beverage_stat <- pizza_data %>% summarise(
+  variable = 'price_swater',
   n   = n(),
   Mean     = mean(price_swater),
   Median   = median(price_swater),
@@ -44,11 +48,14 @@ beverage_stat <- pizza_data %>% summarise(
   Min      = min(price_swater),
   Max      = max(price_swater),
   Skew     = skewness(price_swater))
+
+#merging the two tables with summary statistics
 table_summary <- add_row(pizza_stat,beverage_stat)
-knitr::kable(table_summary,caption="Summary statistics for pizza margherita prices (first row) and for sparkling water prices (second row) in Budapest")
+
+knitr::kable(table_summary,caption="Summary statistics for pizza margherita prices and for sparkling water prices in Budapest")
 ```
 
-The average price of pizza margherita is 1958.25 HUF. As for the sparkiling water, the average price is 518.5 HUF. The mean is higher than the median in case of the pizza and the water as well, indicating a somewhat skewed distribution with a long right tail. I the next section, the distribution will be illustrated by histograms.
+The average price of pizza margherita is 1958.25 HUF. As for the sparkling water, the average price is 518.5 HUF. The mean is higher than the median in case of the pizza and the water as well, indicating a somewhat skewed distribution with a long right tail. I the next section, the distribution will be illustrated by histograms.
 
 ### Histograms of product prices (kernel density showcases skewness)
 The following plots describe the distribution of margherita pizza prices and sparkling water prices. 
@@ -105,8 +112,7 @@ ggplot( pizza_data, aes( x = online, y = price_pizza ) ) +
 ```
 
 ### Test of whether the online and offline prices of margherita pizza are the same
-The hypotheses are about whether the offline versus online price difference is zero on average in population of products represented by the data. The null hypothesis is that online and offline prices of pizza margherita are the same in Budapest. The alternative hypothesis is that online and offline prices of pizza margherita are different in Budapest.
-We fixed the level of significance at 5% then tested hypotheses.
+The hypotheses are about whether the offline versus online price difference is zero on average in population of products represented by the data. The null hypothesis is that online and offline prices of pizza margherita are the same in Budapest. The alternative hypothesis is that online and offline prices of pizza margherita are different in Budapest. We fixed the level of significance at 5% then tested the hypotheses.
 ```{r, '5' , echo=FALSE, fig.cap="Hypothesis Testing" , purl=FALSE}
 test <- t.test(price_pizza ~ delivery, data = pizza_data)
 print( paste0('P-value: ', round( test$p.value, 4 ) ) )
