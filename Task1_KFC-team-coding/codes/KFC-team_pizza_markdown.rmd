@@ -32,6 +32,7 @@ The KFC team ([GitHub](https://github.com/cosmin-ticu/homework_codesANDmore_Codi
 ### Summary statistics
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
 # summary statistics for the price_pizza variable
 pizza_stat <- pizza_data %>% summarise(
   variable = 'price_pizza',
@@ -48,13 +49,13 @@ pizza_stat <- pizza_data %>% summarise(
 beverage_stat <- pizza_data %>% summarise(
   variable = 'price_swater',
   n   = n(),
-  Mean     = round(mean(price_swater), 1),
+  Mean     = round(mean(price_swater)),
   Median   = median(price_swater),
-  Std      = round( sd(price_swater), 1),
+  Std      = round( sd(price_swater)),
   IQ_range = IQR(price_swater), 
   Min      = min(price_swater),
   Max      = max(price_swater),
-  Skew     = round(skewness(price_swater)), 2)
+  Skew     = skewness(price_swater))
 
 # combine the two summary tables under one streamlined table
 table_summary <- add_row(pizza_stat,beverage_stat)
