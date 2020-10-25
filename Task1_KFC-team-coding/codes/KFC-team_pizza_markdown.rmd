@@ -17,17 +17,24 @@ data_in <- "C:/Users/acer/Desktop/OneDrive - Central European University/Courses
 pizza_data <- read_excel( paste0(data_in,"/raw/KFC-team_pizza_data.xlsx") )
 ```
 
-The purpose of the report is to explore data about pizza prices in Budapest. The following repository contains the dataset, walkthrough explanation of the variables and the R codes used to create this descriptive analysis: [GitHub](https://github.com/cosmin-ticu/Data_ExercisesANDhomework_DA1/tree/master/Task1_KFC_Team)
+The purpose of the report is to explore data about pizza prices in Budapest. The following repository contains the dataset, walkthrough explanation of the variables and the R codes used to create this descriptive analysis: [GitHub](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/tree/master/Task1_KFC-team-coding)
 
 ### Data collection, difficulties & problems
 The KFC team chose to limit the data collection to the Budapest area, with on-site prices being gathered only within the inner city districts (i.e. 2, 5, 6, 7, 8, 9, 11, 13), while delivery prices were documented irrespective of inner city district limits. The Google Maps API was used in order to compile the list of on-site locations, gather customer reviews and compute the travel time between the restaurant and CEU. The choice of a margherita pizza made the collection of prices straight-forward. However, the task of gathering optional 0.5 liter beverage prices proved to be a challenge due to inconsistencies across lower-tier and more upscale restaurants. The choice of sparkling water was convened with the drawback that the distribution of prices, brands and mark-up would be much more heterogeneous than with the margherita pizza.
 
-Variables like district, address and restaurant were added for reference purposes and to be able to have a unique identifier for every pizza place in case the dataset were to ever be expanded (for example by adding multiple 'Pizza Forte' franchises throughout Budapest). The binary indicator variable 'delivery' was conceptualized in order to differentiate between prices as quoted on the restaurants' menus (thus considered 'on-site') and prices as quoted by various online merchants. The creation of this variable leads into the 'delivery_site' column which designates the online vendor from which the specific prices were gathered. This alleviates potential issues with regards to price fluctuations because the intermediary merchant is logged and can be researched in the case of unwanted mark-ups. Lastly, since distance from the CEU Nador 15 building is hard to quantify with regards to driving a car (as there are numerous one-way streets and other detours which might add unnecessary distance units to the computation), the shortest walking distance was chosen and the metric of choice was minutes.
+Variables like district, address and restaurant were added for reference purposes and to be able to have a unique identifier for every pizza place in case the dataset were to ever be expanded. The binary indicator variable 'delivery' was conceptualized in order to differentiate between prices as quoted on the restaurants' menus (thus considered 'on-site') and prices as quoted by various online merchants. The creation of this variable leads into the 'delivery_site' column which designates the online vendor from which the specific prices were gathered. Lastly, since distance from the CEU Nador 15 building is hard to quantify with regards to driving a car (as there are numerous one-way streets and other detours which might add unnecessary distance units to the computation), the shortest walking distance was chosen and the metric of choice was minutes.
+
+### Descriptive statistics for prices of margherita pizza and sparkling water
+```{r}
+
+```
+
 
 ### Histograms of product prices (kernel density showcases skewness)
 The following plots describe the distribution of margherita pizza prices and sparkling water prices. 
 
 ```{r, echo=FALSE, out.width='50%'}
+# histogram and kernel density plot for margherita pizza prices (price_pizza variable)
 ggplot( data = pizza_data , aes( x = price_pizza ) ) +
   geom_histogram( aes(y=..density..), fill = 'gold' , binwidth = 100 ) +
   geom_density( aes(y = ..density..) , fill = 'white' , bw = 100, alpha = 0.5 ) +
@@ -38,23 +45,24 @@ ggplot( data = pizza_data , aes( x = price_pizza ) ) +
   theme( panel.grid.minor.x = element_blank(), 
          plot.title = element_text(size = 12, face = "bold", hjust = 0.5 ) )
 
+# histogram and kernel density plot for sparkling water prices (price_swater variable)
 ggplot( data = pizza_data , aes( x = price_swater ) ) +
   geom_histogram( aes(y=..density..), fill = "dodgerblue3" , binwidth = 50 ) +
   geom_density( aes(y = ..density..) , fill = 'white' , bw = 50, alpha = 0.5 ) +
-  labs(x='\n Price of 0.5L Sparkling Water (HUF)', y='Kernel Density (Percentage) \n',
-       title= 'Distribution of Sparkling Water Prices (binned every 50 HUF)')+
+  labs(x='\n Price of 0.5L Sparkling Water (HUF)', y='Kernel Density (Percentage) \n') +
+  ggtitle( 'Distribution of Sparkling Water Prices (binned every 50 HUF)' )+
   scale_y_continuous(labels = scales::percent)+
   theme_light() +
   theme( panel.grid.minor.x = element_blank(), 
          plot.title = element_text(size = 12, face = "bold", hjust = 0.5 ) )
 ```
 
-It can be clearly seen that even though the price distribution for margherita pizza tends to have a few smaller modes, it closely resembles a normal distribution. With the help of binning, the distribution can be brought to look much closer like a normal distribution.
-
-The same cannot be said about the distribution of sparkling water prices, which showcase a heavy right skew, having a mean much higher than the median. This is perhaps caused by the large differences in sparkling water brands (from local Hungarian to expensive imported Italian water). As such, the range of products is much higher than with respect to the pizza. For further analysis, it would be worthwhile to inspect distributions of local sparkling water prices and imported water prices in separate graphs.
-
 ### Visualizations of the price of margherita pizza conditioning on online vs offline price
-```{r, message=FALSE, warning=FALSE, echo=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, out.width='50%'}
+# create factor variable for online vs offline price
+pizza_data$online <- factor( pizza_data$delivery )
+
+# histogram for margherita pizza prices conditioning on online vs offline prices
 ggplot( data = pizza_data, aes( x = price_pizza, fill = online ) ) +
   geom_histogram( alpha = 0.7, binwidth = 60 ) +
   labs( x = '\n Price of Pizza', y = 'Frequency \n', fill = 'Online' ) +
@@ -65,6 +73,7 @@ ggplot( data = pizza_data, aes( x = price_pizza, fill = online ) ) +
          plot.title = element_text(size = 12, face = "bold", hjust = 0.5 ) ) +
   ggtitle( 'Conditional Histogram for the Price of Margherita Pizza' )
 
+# boxplot for margherita pizza prices conditioning on online vs offline prices
 ggplot( pizza_data, aes( x = online, y = price_pizza ) ) +
   geom_boxplot( color = "dodgerblue3", size = 0.7, width = 0.1, alpha = 1 ) +
   labs( x = '\n Online Price', y = 'Price of Pizza \n' ) +
@@ -75,9 +84,16 @@ ggplot( pizza_data, aes( x = online, y = price_pizza ) ) +
   ggtitle( 'Conditional Boxplot for the Price of Margherita Pizza' )
 ```
 
-Based on the two graphs we can conclude that 
+### Test of whether the online and offline prices of margherita pizza are the same
+```{r}
 
-### Summary of results
+```
+
+
+### Summary of findings regarding unconditional and conditional price distributions
+Based on the histograms of product prices it can be clearly seen that even though the price distribution for margherita pizza tends to have a few smaller modes, it closely resembles a normal distribution. With the help of binning, the distribution can be brought to look much closer like a normal distribution. The same cannot be said about the distribution of sparkling water prices, which showcases a heavy right skew, having a mean much higher than the median. This is perhaps caused by the large differences in sparkling water brands (from local Hungarian to expensive imported Italian water). As such, the range of products is much higher than with respect to the pizza. For further analysis, it would be worthwhile to inspect distributions of local sparkling water prices and imported water prices in separate graphs.
+
+As for the conditional distribution of the price of margherita pizza it can be concluded that both the online and offline price distributions approximate a normal distribution. Furthermore, when comparing the two we can see that offline prices are higher on average than online prices since the mean of the former is higher than the latter. Also, on the histogram it is visible that the maximum online price is 2500 HUF while the maximum offline price is almost 3000 HUF. Lastly, the boxplot shows that the spread of offline prices is greater than that of the online prices.
 
 
 # Are these here only to serve as examples?
@@ -87,14 +103,6 @@ Based on the two graphs we can conclude that
 summary(pizza_data$price_pizza)
 ```
 
-### Plots
-```{r, }
-ggplot( data = pizza_data , aes( x = price_pizza ) ) +
-  geom_histogram( aes(y = ..density..) , fill = 'navyblue' , binwidth = 15 ) +
-  geom_density( aes(y = ..density..) , fill = 'red' , bw = 15, alpha = 0.5 ) +
-  labs(x='Price of Margherita Pizza in Budapest',y='Density')+
-  scale_y_continuous(labels = scales::percent)
-```
 
 ### Tables
 ```{r, }
