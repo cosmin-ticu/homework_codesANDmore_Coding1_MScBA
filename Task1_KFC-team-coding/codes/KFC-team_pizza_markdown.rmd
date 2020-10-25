@@ -46,21 +46,21 @@ pizza_stat <- pizza_data %>% summarise(
 
 # summary statistics for the price_swater variable
 beverage_stat <- pizza_data %>% summarise(
-  variable = 'price_water',
+  variable = 'price_swater',
   n   = n(),
-  Mean     = mean(price_swater),
+  Mean     = round(mean(price_swater), 1),
   Median   = median(price_swater),
-  Std      = sd(price_swater),
+  Std      = round( sd(price_swater), 1),
   IQ_range = IQR(price_swater), 
   Min      = min(price_swater),
   Max      = max(price_swater),
-  Skew     = skewness(price_swater))
+  Skew     = round(skewness(price_swater)), 2)
 
 # combine the two summary tables under one streamlined table
 table_summary <- add_row(pizza_stat,beverage_stat)
 
 # print said streamlined table
-knitr::kable(table_summary,caption="Summary statistics for pizza margherita prices (first row) and for sparkling water prices (second row) in Budapest")
+knitr::kable(table_summary,caption="Summary statistics for pizza margherita prices and for sparkling water prices in Budapest")
 ```
 
 The average price of pizza margherita is 1958.25 HUF. As for the sparkling water, the average price is 518.5 HUF. The mean is higher than the median in case of the pizza and the water as well, indicating a somewhat skewed distribution with a longer right tail. In the next section, the distribution will be illustrated by histograms.
