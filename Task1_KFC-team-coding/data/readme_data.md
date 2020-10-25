@@ -1,5 +1,7 @@
 ## Rationale & Data Matters
 
+The GitHub repo of the project can be found here: https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA
+
 The data table contains cross-sectional (xsec) data in a tidy approach.
 
 The KFC (Kata, Fanni, Cosmin) Team decided to gather pizza data within metropolitan Budapest. This refined the location and allowed the team to include the "district" variable referring to the district within which the pizza restaurant is located.
