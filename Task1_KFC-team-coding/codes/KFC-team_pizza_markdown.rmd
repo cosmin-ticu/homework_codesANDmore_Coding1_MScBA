@@ -1,6 +1,5 @@
 ---
-title: "Budapest Pizza Report"
-author: "KFC (Kata, Fanni, Cosmin) Team"
+author: "Budapest Pizza Report - KFC (Kata, Fanni, Cosmin) Team"
 date: 'October 25th, 2020'
 output: pdf_document
 ---
@@ -13,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(readxl)
 library(ggplot2)
+library(moments)
 data_in <- "C:/Users/acer/Desktop/OneDrive - Central European University/Courses/Fall_Term/Coding_1/data/Pizza"
 pizza_data <- read_excel( paste0(data_in,"/raw/KFC-team_pizza_data.xlsx") )
 ```
@@ -25,10 +25,7 @@ The KFC team chose to limit the data collection to the Budapest area, with on-si
 Variables like district, address and restaurant were added for reference purposes and to be able to have a unique identifier for every pizza place in case the dataset were to ever be expanded. The binary indicator variable 'delivery' which differentiates between restaurants' menu and online merchants' prices. The creation of this variable leads into the 'delivery_site' column which designates the online vendor. Lastly, since distance from the CEU Nador 15 building is hard to quantify with regards to driving a car (as there are numerous one-way streets and other detours which might add unnecessary distance units), the shortest walking distance was chosen and the metric of choice is minutes.
 
 ### Descriptive statistics for prices of margherita pizza and sparkling water
-The tables below contain some important summary statistics about the price of pizza margerita (Table 1) and sparkling water (Table 2). 
-```{r, '2a' , echo = FALSE, out.width='50%'}
-library(moments)
-
+```{r, echo = FALSE, out.width='50%'}
 pizza_stat <- pizza_data %>% summarise(
   n   = n(),
   Mean     = mean(price_pizza),
@@ -38,14 +35,7 @@ pizza_stat <- pizza_data %>% summarise(
   Min      = min(price_pizza),
   Max      = max(price_pizza),
   Skew     = skewness(price_pizza))
-
-knitr::kable(pizza_stat,caption="Table 1: Descriptive statistics for pizza margherita prices in Budapest")
-```
-
-```{r , '2b' , echo = FALSE, out.width='50%'}
-library(moments)
-
-pizza_stat <- pizza_data %>% summarise(
+beverage_stat <- pizza_data %>% summarise(
   n   = n(),
   Mean     = mean(price_swater),
   Median   = median(price_swater),
@@ -54,9 +44,10 @@ pizza_stat <- pizza_data %>% summarise(
   Min      = min(price_swater),
   Max      = max(price_swater),
   Skew     = skewness(price_swater))
-
-knitr::kable(pizza_stat,caption="Table 2: Descriptive statistics for sparkling water prices of pizzerias in Budapest")
+table_summary <- add_row(pizza_stat,beverage_stat)
+knitr::kable(table_summary,caption="Summary statistics for pizza margherita prices (first row) and for sparkling water prices (second row) in Budapest")
 ```
+
 The average price of pizza margherita is 1958.25 HUF. As for the sparkiling water, the average price is 518.5 HUF. The mean is higher than the median in case of the pizza and the water as well, indicating a somewhat skewed distribution with a long right tail. I the next section, the distribution will be illustrated by histograms.
 
 ### Histograms of product prices (kernel density showcases skewness)
