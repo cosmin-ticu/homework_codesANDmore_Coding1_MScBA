@@ -20,9 +20,9 @@ pizza_data <- read_excel( paste0(data_in,"/raw/KFC-team_pizza_data.xlsx") )
 The purpose of the report is to explore data about pizza prices in Budapest. The following repository contains the dataset, walkthrough explanation of the variables and the R codes used to create this descriptive analysis: [GitHub](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/tree/master/Task1_KFC-team-coding)
 
 ### Data collection, difficulties & problems
-The KFC team chose to limit the data collection to the Budapest area, with on-site prices being gathered only within the inner city districts (i.e. 2, 5, 6, 7, 8, 9, 11, 13), while delivery prices were documented irrespective of inner city district limits. The Google Maps API was used in order to compile the list of on-site locations, gather customer reviews and compute the travel time between the restaurant and CEU. The choice of a margherita pizza made the collection of prices straight-forward. However, the task of gathering optional 0.5 liter beverage prices proved to be a challenge due to inconsistencies across lower-tier and more upscale restaurants. The choice of sparkling water was convened with the drawback that the distribution of prices, brands and mark-up would be much more heterogeneous than with the margherita pizza.
+The KFC team chose to limit the data collection to the Budapest area, with on-site prices being gathered only within the inner city districts (i.e. 2, 5, 6, 7, 8, 9, 11, 13), while delivery prices were documented irrespective of inner city district limits. The Google Maps API was used in order to compile the list (custom Google Maps shared lists) of on-site locations, gather customer reviews and compute the travel time between the restaurant and CEU. The choice of 0.5L sparkling water was convened with the drawback that the distribution of prices, brands and mark-up would be more heterogeneous than with the margherita pizza.
 
-Variables like district, address and restaurant were added for reference purposes and to be able to have a unique identifier for every pizza place in case the dataset were to ever be expanded. The binary indicator variable 'delivery' was conceptualized in order to differentiate between prices as quoted on the restaurants' menus (thus considered 'on-site') and prices as quoted by various online merchants. The creation of this variable leads into the 'delivery_site' column which designates the online vendor from which the specific prices were gathered. Lastly, since distance from the CEU Nador 15 building is hard to quantify with regards to driving a car (as there are numerous one-way streets and other detours which might add unnecessary distance units to the computation), the shortest walking distance was chosen and the metric of choice was minutes.
+Variables like district, address and restaurant were added for reference purposes and to be able to have a unique identifier for every pizza place in case the dataset were to ever be expanded. The binary indicator variable 'delivery' which differentiates between restaurants' menu and online merchants' prices. The creation of this variable leads into the 'delivery_site' column which designates the online vendor. Lastly, since distance from the CEU Nador 15 building is hard to quantify with regards to driving a car (as there are numerous one-way streets and other detours which might add unnecessary distance units), the shortest walking distance was chosen and the metric of choice is minutes.
 
 ### Descriptive statistics for prices of margherita pizza and sparkling water
 ```{r}
@@ -33,7 +33,7 @@ Variables like district, address and restaurant were added for reference purpose
 ### Histograms of product prices (kernel density showcases skewness)
 The following plots describe the distribution of margherita pizza prices and sparkling water prices. 
 
-```{r, echo=FALSE, out.width='50%'}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, out.width='50%'}
 # histogram and kernel density plot for margherita pizza prices (price_pizza variable)
 ggplot( data = pizza_data , aes( x = price_pizza ) ) +
   geom_histogram( aes(y=..density..), fill = 'gold' , binwidth = 100 ) +
@@ -94,35 +94,3 @@ ggplot( pizza_data, aes( x = online, y = price_pizza ) ) +
 Based on the histograms of product prices it can be clearly seen that even though the price distribution for margherita pizza tends to have a few smaller modes, it closely resembles a normal distribution. With the help of binning, the distribution can be brought to look much closer like a normal distribution. The same cannot be said about the distribution of sparkling water prices, which showcases a heavy right skew, having a mean much higher than the median. This is perhaps caused by the large differences in sparkling water brands (from local Hungarian to expensive imported Italian water). As such, the range of products is much higher than with respect to the pizza. For further analysis, it would be worthwhile to inspect distributions of local sparkling water prices and imported water prices in separate graphs.
 
 As for the conditional distribution of the price of margherita pizza it can be concluded that both the online and offline price distributions approximate a normal distribution. Furthermore, when comparing the two we can see that offline prices are higher on average than online prices since the mean of the former is higher than the latter. Also, on the histogram it is visible that the maximum online price is 2500 HUF while the maximum offline price is almost 3000 HUF. Lastly, the boxplot shows that the spread of offline prices is greater than that of the online prices.
-
-
-# Are these here only to serve as examples?
-### Summary
-
-```{r, }
-summary(pizza_data$price_pizza)
-```
-
-
-### Tables
-```{r, }
-library(moments)
-pizza_stat <- pizza_data %>% summarise(
-  mean     = mean(price_pizza),
-  median   = median(price_pizza),
-  std      = sd(price_pizza),
-  iq_range = IQR(price_pizza), 
-  min      = min(price_pizza),
-  max      = max(price_pizza),
-  skew     = skewness(price_pizza),
-  numObs   = n() )
-knitr::kable(pizza_stat,caption="Summary stat for hotel prices")
-```
-
-Better table
-```{r, results = "asis", warning = FALSE, message = FALSE }
-library(xtable)
-
-xtb <- xtable(pizza_stat, type = "latex", caption = "Summary statistics - elegant package")
-print(xtb, comment=FALSE, include.rownames=FALSE)
-```
