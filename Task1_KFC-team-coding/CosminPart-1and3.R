@@ -20,34 +20,22 @@ pizza_data <- read_excel( paste0(data_in,"/raw/KFC-team_pizza_data.xlsx") )
 
 # Descriptive graph on pizza
 ggplot( data = pizza_data , aes( x = price_pizza ) ) +
-  geom_histogram( aes(y=..density..), fill = 'brown' , binwidth = 100 ) +
-  geom_density( aes(y = ..density..) , fill = 'red' , bw = 100, alpha = 0.5 ) +
+  geom_histogram( aes(y=..density..), fill = 'brown' , binwidth = 100, alpha = 0.7 ) +
+  geom_density( aes(y = ..density..) , fill = 'red' , bw = 100, alpha = 0.3 ) +
   labs(x='Price of Margherita Pizza (HUF)',y='Kernel Density (Percentage)',
-       title= 'Distribution of Margherita Pizza Prices')+
+       title= 'Distribution of Margherita Pizza Prices (binned every 100 HUF)')+
   scale_y_continuous(labels = scales::percent)+
-  theme_light()
+  theme_light() +
+  theme( panel.grid.minor.x = element_blank(), 
+         plot.title = element_text(size = 12, face = "bold", hjust = 0.5 ) )
 
 # Descriptive graph on sparkling water
 ggplot( data = pizza_data , aes( x = price_swater ) ) +
-  geom_histogram( aes(y=..density..), fill = 'navyblue' , binwidth = 50 ) +
-  geom_density( aes(y = ..density..) , fill = 'white' , bw = 50, alpha = 0.5 ) +
+  geom_histogram( aes(y=..density..), fill = 'navyblue' , binwidth = 50, alpha = 0.7 ) +
+  geom_density( aes(y = ..density..) , fill = 'white' , bw = 50, alpha = 0.3 ) +
   labs(x='Price of 0.5L Sparkling Water (HUF)', y='Kernel Density (Percentage)',
-       title= 'Distribution of Optional Sparkling Water Prices')+
+       title= 'Distribution of Sparkling Water Prices (binned every 50 HUF)')+
   scale_y_continuous(labels = scales::percent)+
-  theme_light()
-
-# ```{r, echo=FALSE, out.width='50%'}
-# ggplot( data = pizza_data , aes( x = price_pizza ) ) +
-#   geom_histogram( aes(y=..density..), fill = 'brown' , binwidth = 100 ) +
-#   geom_density( aes(y = ..density..) , fill = 'red' , bw = 100, alpha = 0.5 ) +
-#   labs(x='Price of Margherita Pizza (HUF)',y='Kernel Density (Percentage)',
-#        title= 'Distribution of Margherita Pizza Prices')+
-#   scale_y_continuous(labels = scales::percent)
-# 
-# ggplot( data = pizza_data , aes( x = price_swater ) ) +
-#   geom_histogram( aes(y=..density..), fill = 'navyblue' , binwidth = 50 ) +
-#   geom_density( aes(y = ..density..) , fill = 'white' , bw = 50, alpha = 0.5 ) +
-#   labs(x='Price of 0.5L Sparkling Water (HUF)', y='Kernel Density (Percentage)',
-#        title= 'Distribution of Optional Sparkling Water Prices')+
-#   scale_y_continuous(labels = scales::percent)
-# ```
+  theme_light() +
+  theme( panel.grid.minor.x = element_blank(), 
+         plot.title = element_text(size = 12, face = "bold", hjust = 0.5 ) )
