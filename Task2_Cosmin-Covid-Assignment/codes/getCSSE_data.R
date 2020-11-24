@@ -8,4 +8,4 @@ covid_cases_raw <- read.csv('https://raw.githubusercontent.com/CSSEGISandData/CO
 
 # Save the raw data file
 my_path <- "C:/Users/cosmi/Documents/homework_codesANDmore_Coding1_MScBA/Task2_Cosmin-Covid-Assignment/data/"
-write_csv(covid_cases_raw, paste0(my_path,'raw/CSSE_covid_raw.csv'))
+write_csv(covid_cases_raw, paste0(my_path,'raw/covid_04_11_2020_raw.csv'))
