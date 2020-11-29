@@ -31,11 +31,11 @@ library(moments)
 
 # Executive Summary
 
-This study aims to uncover any patterns of association between global Covid-19 cases and deaths. Data was gathered, cleaned and merged using John Hopkins University Covid-19 reports (as of 04.11.2020) and World Bank data on population (as of 2019). This study worked with ratio data, namely coronavirus cases and deaths per 1000 people as the chosen metrics. By employing logarithmic transformations of the data to reduce skewness, the study found a population-weighted OLS linear regression model to estimate the pattern of association between global Covid-19 cases and deaths per 1000 capita. The final model moves away from a country-centric regression, instead tailoring to citizens. The bias of this model is given by the weight, thus prioritizing countries with large populations. In fact, the most interesting finding of the study was that model coverage (R-squared) increases dramatically once we discriminate against low-population countries or countries with close to no reported deaths.
+This study, linked [here](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/tree/master/Task2_Cosmin-Covid-Assignment) on Github, aims to uncover any patterns of association between global Covid-19 cases and deaths. Data was gathered, cleaned and merged using [John Hopkins University Covid-19 reports](https://github.com/CSSEGISandData/COVID-19) (as of 04.11.2020) and World Bank data on population (as of 2019). This study worked with ratio data, namely coronavirus cases and deaths per 1000 people as the chosen metrics. By employing logarithmic transformations of the data to reduce skewness, the study found a population-weighted OLS linear regression model to estimate the pattern of association between global Covid-19 cases and deaths per 1000 capita. The final model moves away from a country-centric regression, instead tailoring to citizens. The bias of this model is given by the weight, thus prioritizing countries with large populations. In fact, the most interesting finding of the study was that model coverage (R-squared) increases dramatically once we discriminate against low-population countries or countries with close to no reported deaths.
 
 # Introduction
 
-The aim of this study is to use Covid-19 data to explore a pattern of association between confirmed cases and confirmed deaths. Thus, the research question arises: "How do confirmed coronavirus cases per country affect confirmed coronavirus deaths per country?" The data gathered represents John Hopkins University Covid-19 cases and deaths as of the 4th of November 2020. The scope of the analysis is to take the confirmed cases and the deaths and divide them by each country's population in order to work with ratio'd data. The population of this study is the entire world and the sample, containing close to all the internationally recognized territories of the world, can be considered as a representative batch.
+The aim of this study is to use Covid-19 data to explore a pattern of association between confirmed cases and confirmed deaths. Thus, the research question arises: "How do confirmed coronavirus cases per country affect confirmed coronavirus deaths per country?" The data gathered represents John Hopkins University Covid-19 global cases and deaths tracking as of the 4th of November 2020. The analysis takes the confirmed cases and the deaths and divides them by each country's population in order to work with ratio'd data. The population of this study is the entire world and the sample, containing close to all the internationally recognized territories of the world, can be considered as a representative batch.
 Many data quality issues are at play in this dataset, namely: questions of covid case tracking, improper death labels, confounding variables, improper cross-country comparisons and many more.
 
 ## Selecting Observations
@@ -44,7 +44,7 @@ Only country instances not containing missing values for population, confirmed c
 
 # Histograms, Density Plots & Summary Statistics
 
-From the histogram distributions of the x (cases per 1000 capita) and y (deaths per 1000 capita) variables as well as the population variable (see Appendix) which will later be used in model refinement, we can see a define right skew for all variables. This means that while we have many country with moderate coronavirus cases, a few extreme cases, such as China, India and US really skew the data distribution towards the right for both cases and deaths per 1000 capita. This skew happens when the average is larger than the median.
+From the histogram distributions of the x (cases per 1000 capita) and y (deaths per 1000 capita) variables as well as the population variable (see Appendix A.1 & A.2) which will later be used in model refinement, we can see a define right skew for all variables. This means that a few extreme cases such as China, India and US really skew the data distribution towards the right for both cases and deaths per 1000 capita. This skew happens when the mean is larger than the median.
 
 ```{r,message=FALSE,echo=FALSE,warning=FALSE,out.width='50%'}
 df <- read_csv('https://raw.githubusercontent.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/master/Task2_Cosmin-Covid-Assignment/data/clean/merged_covid_WDI_04_11_2020_clean.csv')
@@ -114,7 +114,7 @@ knitr::kable(table_summary,caption="Summary statistics for cases and deaths per 
 
 # Data Transformation
 
-With data skewness observed, the variables of cases and deaths per 1000 capita need to be rescaled. See Appendix for graphs of logarithmic scale transformations with a non-parametric lowess regression model fitted. In conclusion, taking the natural logarithm of both variables is needed.
+With data skewness observed, the variables of cases and deaths per 1000 capita need to be rescaled. See Appendix A.3 for graphs of logarithmic scale transformations with a non-parametric lowess regression model fitted. In conclusion, taking the natural logarithm of both variables is needed.
 
 Substantive Reasoning
 
@@ -126,7 +126,7 @@ Statistical Reasoning
 
 + Modeling non-linearity for extremely affected coronavirus countries and for isolated territories (such as Marshall Islands) would overfit any model due to complexity;
 + Due to negative logarithmic values in the data, countries with 0 deaths cannot just be manually given a log value of 0;
-+ A workaround was found in the case of the zero values. The consensus online around data analysts is to add a small amount to each observation. The main suggested amount was half of the smallest non-zero value. See Appendix for detailed substantive and statistical explanation;
++ A workaround was found in the case of the zero values. The consensus online around data analysts is to add a small amount to each observation. The main suggested amount was half of the smallest non-zero value. See Appendix for detailed substantive and statistical explanation (see Appendix A.4);
 + Both distributions have long right tails, and log transformation can make large differences smaller, but they also make small difference much larger;
 + Taking log of both variables makes pattern closer to linear;
 + Heteroskedasticity appears reduced as opposed to the level-level model and the interest is to reduce it even while using robust models (R-squared benefits);
@@ -171,7 +171,7 @@ reg6 <- lm_robust(ln_deaths_capita ~ ln_cases_capita, data = df , weights = popu
 
 # Model of Choice & Hypothesis Test
 
-See Appendix for model comparison discussion and reasoning for choice of weighted log-log OLS model by population (R-squared discussion, coefficient discussion, etc.). Also, see the standalone output html file (requires download to local machine) [here](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/blob/master/Task2_Cosmin-Covid-Assignment/output(s)/model_comparison_covid_regressions.html) for the model comparison statistics. 
+See Appendix A.6 for model comparison discussion and reasoning for choice of weighted log-log OLS model by population (R-squared discussion, coefficient discussion, etc.). Also, see the standalone output html file (requires download to local machine) [here](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/blob/master/Task2_Cosmin-Covid-Assignment/output(s)/model_comparison_covid_regressions.html) for the model comparison statistics. 
 
 The final model (see Appendix A.6.2.3 for plot) takes the following form:
 
@@ -201,7 +201,7 @@ With a t-value for the beta coefficient of ~11, we are much above the threshold 
 
 The residual analysis (see Appendix A.5 for top 5 tables) uncovers top overestimated observations (by the top negative residuals) and the top underestimated observations (by top positive residuals). From the histogram of residuals (see Appendix) we can discern that some extreme negative values do exist. As suspected in the beginning, because this model discriminates against countries with low populations and subsequently (but this is applicable to all models) against extreme cases of isolated countries or countries with extremely low deaths, it estimates higher ln_deaths_capita for these special cases. Because this is a global model (pertaining to capita, not countries' capita) for instance it overestimates Bhutan's deaths (globally-praised for handling the pandemic) and underestimates Yemen's deaths (famished country in poverty with poor handling of pandemic).
 
-# Appendix A (tables, charts and graphs)
+# Appendix A (tables, charts, graphs & discussion)
 
 ## A.1 Population Distribution
 
@@ -314,7 +314,7 @@ ggplot(df, aes(x = reg6_resid))+
   geom_density( aes(y = ..density..) , fill = 'white' , bw = 0.3, alpha = 0.5 )
 ```
 
-A last measure of interest for the residual analysis would be to inspect the residuals in level format. With the tables below, the measures of interest are now in their original scales of deaths per 1000 capita, rather than log, which can make individual country interpretations easier.
+Because of our model's bias towards populous coutries and population masses, we have a few outliers in the distribution of residuals such as Bhutan and the Seychelles, which have been overestimated by the model. A last measure of interest for the residual analysis would be to inspect the residuals in level format. With the tables below, the measures of interest are now in their original scales of deaths per 1000 capita, rather than log, which can make individual country interpretations easier to discern in absolute numbers. However, since we are converting back to level scale from a log model, conclusions are subject to the log interpretation, not the level interpretation.
 
 ```{r,echo=F,warning=F,message=F,comment=F,error=F, out.width='50%'}
 ## case of deaths_capita (converting from log to level)
