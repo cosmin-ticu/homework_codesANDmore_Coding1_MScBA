@@ -1,0 +1,1 @@
+This folder contains the structure of the 2 data folders and the respective datasets within each folder. The WDI and CSSE extracts can be found in the 'raw' data folder and the cleaned data as well as the merged data of the two sets can be found in the 'clean' folder.

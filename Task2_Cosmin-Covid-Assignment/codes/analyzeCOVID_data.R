@@ -36,13 +36,13 @@ df <- transmute(df,
            deaths = death,
            cases_capita = confirmed/population*1000,
            deaths_capita = death/population*1000,
-           population = population)
+           population = population/1000000)
 
 
 # Choice of data ----------------------------------------------------------
 
 # FROM NOW ON THE VARIABLES OF CASES_CAPITA AND DEATHS_CAPITA REFER TO SCALES OF
-# PER 1000 PEOPLE
+# PER 1000 PEOPLE AND POPULATION REFERS TO MILLIONS
 ## interpretation should be much more straight forward this way
 
 # ex: with every 1% increase in coronavirus cases per 1000 people, we observe
@@ -130,7 +130,11 @@ ggplot( df , aes(x = cases_capita, y = deaths_capita ))  +
 #   4) taking log of both variables is making the association closer to linear!
 #   5) taking log for both variables makes sense
 #       - Substantive: it gives easier interpretation than level-log or log-level, as now only percentage changes are concerned
+#                      also, because both variables are measured on the exact same scale and provide similar levels of skew
+#                      it is unfitting to only take the log of one single variable
 #       - Statistical: heteroskedasticity appears reduced as opposed to the level - level model
+#                      long right tail (right skewed variables) is fixed by log distribution
+#                      most covid-19 data trackers also employ log transformations in order to minimize skew
 
 ## Take Log of both explanatory and explained variables
 # A workaround was found in the case of the ZERO values
@@ -177,12 +181,12 @@ ggplot( df_test , aes(x = ln_cases_capita, y = ln_deaths_capita ))  +
 
 # Model creation ----------------------------------------------------------
 
-# Five models to compare between each other with log-log model:
+# Six regression models to compare between each other with log-log model:
 #     reg1: ln_deaths_capita = alpha + beta * ln_cases_capita
 #     reg2: ln_deaths_capita = alpha + beta_1 * ln_cases_capita + beta_2 * ln_cases_capita^2
 #     reg3: ln_deaths_capita = alpha + beta_1 * ln_cases_capita + beta_2 * ln_cases_capita^2 + beta_3 * ln_cases_capita^3
-#     reg4: ln_deaths_capita = alpha + beta_1 * ln_cases_capita * 1(cases_capita < 0.01) + beta_2 * ln_cases_capita * 1(cases_capita >= 0.01)
-#     reg5: ln_deaths_capita = alpha + beta_1 * ln_cases_capita * 1(cases_capita < 0.0002) + beta_2 * ln_cases_capita * 1(0.0002 <= cases_capita < 0.01) + beta_3 * ln_cases_capita * 1(cases_capita >= 0.01)
+#     reg4: ln_deaths_capita = alpha + beta_1 * ln_cases_capita * 1(cases_capita < 10) + beta_2 * ln_cases_capita * 1(cases_capita >= 10)
+#     reg5: ln_deaths_capita = alpha + beta_1 * ln_cases_capita * 1(cases_capita < 0.2) + beta_2 * ln_cases_capita * 1(0.2 <= cases_capita < 10) + beta_3 * ln_cases_capita * 1(cases_capita >= 10)
 #     reg6: ln_deaths_capita = alpha + beta * ln_cases_capita, weights: population
 
 ###
@@ -239,9 +243,6 @@ ggplot( data = df, aes( x = ln_cases_capita, y = ln_deaths_capita ) ) +
   geom_point( color='blue') +
   geom_smooth( formula = y ~ lspline(x,cutoff_ln) , method = lm , color = 'red' )
 summary( reg4 )
-## the linear splines regression does not make sense in the case of setting a cutoff point that is so low as
-## logs tend to make large differences much smaller and small differences much larger
-# Thus, the
 
 # fifth model - regression with piecewise linear spline:
 # 1st define the cutoff for cases_capita
