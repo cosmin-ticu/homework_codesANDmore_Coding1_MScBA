@@ -24,9 +24,7 @@ cv2 <- cv %>%
 # Rename variables
 cv2 <- cv2 %>% rename( country   = Country_Region ,
                        confirmed = Confirmed_sum,
-                       death     = Deaths_sum,
-                       recovered = Recovered_sum,
-                       active    = Active_sum )
+                       death     = Deaths_sum)
 
 ###
 # Check for extreme values

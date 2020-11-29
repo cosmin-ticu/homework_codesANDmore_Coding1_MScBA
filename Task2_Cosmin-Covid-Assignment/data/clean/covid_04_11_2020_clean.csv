@@ -1,4 +1,4 @@
-country,confirmed,death,recovered,active
+country,confirmed,death,Recovered_sum,Active_sum
 Afghanistan,41814,1548,34362,5904
 Albania,22300,536,11578,10186
 Algeria,59527,1999,41001,16527
