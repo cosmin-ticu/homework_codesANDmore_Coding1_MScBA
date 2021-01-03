@@ -76,7 +76,7 @@ ggplot(office) +
 
 # Saturated (technically not because as.factor() wizardry ) LPM models office ----
 
-# 1st model: safety mission engagement regressed on whether hazards have been reviewed
+# 1st LPM model: safety mission engagement regressed on whether hazards have been reviewed
 lpm1 <- lm( mission ~ hazards, data=office )
 summary( lpm1, vcov=sandwich )
 
@@ -133,7 +133,7 @@ stargazer(list(lpm1, lpm2, lpm3, lpm4), digits=3, out=paste(w_dir,"output(s)/tra
 # predicted probabilities
 office$pred_lpm_4 <- predict(lpm4)
 # Summary
-summary(office$pred_lpm_4)
+sum_stat(office, 'pred_lpm_4', c('mean','median','sd','min','max'))
 # Because we have an upper boundary that is larger than 1 for these values, we need to use
 # a probit or a logit model for prediction. For the purpose of uncovering patterns of
 # association, we can proceed with using this linear probability model
@@ -156,10 +156,7 @@ office <- office %>%
 
 # Bottom 10% means lower probability (starting from 66%) of safety mission engagement
 b1 <- office %>% filter( q10_pred_lpm_4 == 1 )
-var_interest <- c('hazards',
-                  'very_familiar_risks','familiar_risks','no_response_risks',
-                  'somewhat_familiar_risks','not_familiar_risks',
-                  'noresponse_safe_office','yes_safe_office','no_safe_office')
+var_interest <- 'hazards'
 stat_interest <- c('mean','median','sd')
 sum_stat(b1,var_interest,stat_interest,num_obs = F)
 table(b1$office_familiar_risks)
@@ -216,6 +213,18 @@ summary(office$pred_probit)
 probit_marg <- probitmfx(model_formula, data=office, atmean=FALSE)
 print(probit_marg)
 
+# Summary statistics of predicted values for logit
+sum_stat_logit <- sum_stat(office, 'pred_logit', c('mean','median','sd','min','max'))
+# Summary statistics of predicted values for logit
+sum_stat_probit <- sum_stat(office, 'pred_probit', 
+                            c('mean','median','sd','min','max')) %>% subset(select = -statistics)
+# Summary statistics of predcited values for rich LPM
+sum_stat_lpm <- sum_stat(office, 'pred_lpm_4', 
+                         c('mean','median','sd','min','max')) %>% subset(select = -statistics)
+
+# combine the summary tables of x and y variables under one streamlined table
+table_summary <- add_column(sum_stat_logit,sum_stat_probit, sum_stat_lpm)
+
 ###
 # Creating a model summary output with msummary
 cm <- c('(Intercept)' = 'Constant')
@@ -244,8 +253,8 @@ ggplot(data = office) +
   geom_point(aes(x=pred_lpm_4, y=pred_logit,  color="Logit"), size=1,  shape=16) +
   geom_line(aes(x=pred_lpm_4, y=pred_lpm_4,    color="45 degree line"), size=1) +
   labs(x = "Predicted probability of respondent safety mission engagement (LPM)", y="Predicted probability")+
-  scale_y_continuous(expand = c(0.00,0.0), limits = c(0.5,1), breaks = seq(0,1,0.1)) +
-  scale_x_continuous(expand = c(0.00,0.0), limits = c(0.5,1), breaks = seq(0,1,0.1)) +
+  scale_y_continuous(expand = c(0.00,0.0), limits = c(0.3,1), breaks = seq(0,1,0.1)) +
+  scale_x_continuous(expand = c(0.00,0.0), limits = c(0.3,1), breaks = seq(0,1,0.1)) +
   scale_color_manual(name = "", values=c("green", "red","blue"))+
   theme(legend.position=c(0.55,0.08),
         legend.direction = "horizontal",
@@ -272,8 +281,8 @@ ggplot(data = office,aes(x=pred1)) +
   theme(legend.position = c(0.3,0.9),
         legend.key.size = unit(x = 0.5, units = "cm"))
 
-# LPM rich model
-ggplot(data = office,aes(x=pred_lpm_4)) + 
+# Logit model based on LPM rich formula
+ggplot(data = office,aes(x=pred_logit)) + 
   geom_histogram(data=subset(office[office$mission == 1, ]), 
                  aes(fill=as.factor(mission), color=as.factor(mission), y = (..count..)/sum(..count..)*100),
                  binwidth = 0.05, boundary=0, alpha=0.8) +
@@ -285,7 +294,7 @@ ggplot(data = office,aes(x=pred_lpm_4)) +
   ylab("Percent") +
   xlab("Fitted values") +
   scale_x_continuous(expand=c(0.01,0.01) ,limits = c(0,1), breaks = seq(0,1,0.2)) +
-  scale_y_continuous(expand=c(0.00,0.00) ,limits = c(0,20), breaks = seq(0,20,4)) +
+  scale_y_continuous(expand=c(0.00,0.00) ,limits = c(0,100), breaks = seq(0,100,20)) +
   theme(legend.position = c(0.3,0.9),
         legend.key.size = unit(x = 0.5, units = "cm"))
 
@@ -323,7 +332,7 @@ actual_vs_predicted <- office %>%
   ungroup() %>% 
   dplyr::select(actual = mission, 
                 predicted = pred_logit) 
-num_groups <- 10
+num_groups <- 15
 
 calibration_d <- actual_vs_predicted %>%
   mutate(predicted_score_group = dplyr::ntile(predicted, num_groups))%>%
