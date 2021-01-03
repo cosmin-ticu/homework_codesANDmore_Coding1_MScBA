@@ -29,8 +29,8 @@ library(caTools)
 
 # Call the data
 w_dir <- "C:/Users/cosmi/Documents/homework_codesANDmore_Coding1_MScBA/Task3_Term-Project-Analysis/"
-# non_office_OG <- read.csv(paste0(w_dir,"data/clean/manufacturing-project-services_data.csv"))
-office_OG <- read.csv(paste0(w_dir,"data/clean/office_survey_data.csv"))
+# non_office_OG <- read.csv('https://raw.githubusercontent.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/master/Task3_Term-Project-Analysis/data/clean/manufacturing-project-services_data.csv')
+office_OG <- read.csv('https://raw.githubusercontent.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/master/Task3_Term-Project-Analysis/data/clean/office_survey_data.csv')
 
 # Split office data into train and test samples for robustness check at the end
 set.seed(123)
@@ -39,7 +39,7 @@ office <- subset(office_OG, sample == TRUE)
 office_test <- subset(office_OG, sample == FALSE)
 
 # Call a function from a file:
-source(paste0(w_dir,'/codes/sum_stat.R'))
+source('https://raw.githubusercontent.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/master/Task3_Term-Project-Analysis/codes/sum_stat.R')
 
 # Make descriptive statistics for selected office variables
 desc_stat_office <- sum_stat( office , var_names = c('yes_safe_office','no_safe_office','noresponse_safe_office','hazards','mission'),

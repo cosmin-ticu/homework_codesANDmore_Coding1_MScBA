@@ -5,7 +5,7 @@ library(tidyverse)
 
 # Call the data
 w_dir <- "C:/Users/cosmi/Documents/homework_codesANDmore_Coding1_MScBA/Task3_Term-Project-Analysis/data"
-df <- read.csv(paste0(w_dir,"/raw/cosmin_manufacturing_survey.csv"))
+df <- read.csv('https://raw.githubusercontent.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/master/Task3_Term-Project-Analysis/data/raw/cosmin_manufacturing_survey.csv')
 
 # Check data
 glimpse( df )

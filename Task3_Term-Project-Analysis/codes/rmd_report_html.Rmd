@@ -37,8 +37,8 @@ The aim of this study is to uncover the patterns of association between how offi
 
 ```{r, include=FALSE}
 # Call the data
-w_dir <- "C:/Users/cosmi/Documents/homework_codesANDmore_Coding1_MScBA/Task3_Term-Project-Analysis/"
-office_OG <- read.csv(paste0(w_dir,"data/clean/office_survey_data.csv"))
+# w_dir <- "C:/Users/cosmi/Documents/homework_codesANDmore_Coding1_MScBA/Task3_Term-Project-Analysis/"
+office_OG <- read.csv('https://raw.githubusercontent.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/master/Task3_Term-Project-Analysis/data/clean/office_survey_data.csv')
 
 # Split office data into train and test samples for robustness check at the end
 set.seed(123)
@@ -46,8 +46,8 @@ sample <- sample.split(office_OG, SplitRatio = 0.75)
 office <- subset(office_OG, sample == TRUE)
 office_test <- subset(office_OG, sample == FALSE)
 
-# Call a summary statistic function from a file:
-source(paste0(w_dir,'/codes/sum_stat.R'))
+# Call Agoston's summary statistic function from a file:
+source('https://raw.githubusercontent.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/master/Task3_Term-Project-Analysis/codes/sum_stat.R')
 ```
 
 # Introduction - Purpose & Rationale
@@ -64,32 +64,32 @@ As with any survey data, classical measurement error is a concern for analysis. 
 
 Lastly, non-classical measurement error is also hypothesized to be present with the data, as employees are inclined to always agree with any mission statements provided by their corporate employers. While the survey was anonymous, it is possible that people gave reactive answers, agreeing with the general mission statements and office attitudes. This type of error is much harder to identify and control, and it is suspected to be present and affect the distribution of predicted values (by skewing towards "yes" irrespective of explanatory parameters).
 
-## The data itself
+## The data
 
 The variables of choice within the office environment sample are safe_office, hazards_reviewed, office_familiar_risks and safety_mission engagement.
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width='50%'}
 # Descriptive statistics (bar charts) of variables of interest
 ggplot(office) +
-  geom_bar(aes(x = office_safety_mission_engagement))+ 
+  geom_bar(aes(x = office_safety_mission_engagement), fill = 'blue3')+ 
   theme_bw() +
   ggtitle('Figure 1: Distribution of safety mission engagement answers')+
   theme(plot.title = element_text(size = 16))+
   labs(x = "Respondent feels engaged in the corporate safety mission",y = "Count of answers")
 ggplot(office) +
-  geom_bar(aes(x = safe_office))+ 
+  geom_bar(aes(x = safe_office), fill = 'red3')+ 
   theme_bw() +
   ggtitle('Figure 2: Distribution of office safety answers')+
   theme(plot.title = element_text(size = 16))+
   labs(x = "Respondent answers whether their office is safe",y = "Count of answers")
 ggplot(office) +
-  geom_bar(aes(x = office_familiar_risks))+ 
+  geom_bar(aes(x = office_familiar_risks), fill = 'paleturquoise')+ 
   theme_bw() +
   ggtitle('Figure 3: Distribution of office risks familiarity answers')+
   theme(plot.title = element_text(size = 16))+
   labs(x = "Respondent is familiar with their office's risks",y = "Count of answers")
 ggplot(office) +
-  geom_bar(aes(x = office_hazards_reviewed))+ 
+  geom_bar(aes(x = office_hazards_reviewed), fill = 'goldenrod3')+ 
   theme_bw() +
   ggtitle('Figure 4: Distribution of office hazard review answers')+
   theme(plot.title = element_text(size = 16))+
@@ -126,16 +126,16 @@ office<-office %>%
   mutate(weight_2=(weight/1000))
 
 ggplot(data = office) +
-  geom_point( aes(x = hazards, y = pred1), size = 2, color="red", shape = 16) +
-  geom_line(  aes(x = hazards, y = pred1), colour="red",  size = 0.7) +
-  geom_point( aes(x = hazards, y = mission, size=weight_2), fill = "blue", color="blue",
+  geom_point( aes(x = hazards, y = pred1), size = 2, color="red3", shape = 16) +
+  geom_line(  aes(x = hazards, y = pred1), colour="red3",  size = 0.7) +
+  geom_point( aes(x = hazards, y = mission, size=weight_2), fill = "blue3", color="blue3",
               shape = 16, alpha=0.8, show.legend=F, na.rm=TRUE)  +
-  labs(x = "Respondent has reviewed the hazards in the office", y = "Respondent feels engaged to corporate safety mission / Predicted probability of ")+
+  labs(x = "Respondent has reviewed the hazards in the office", y = "Engaged to corporate safety mission / Predicted probability of ")+
   coord_cartesian(xlim = c(0, 1), ylim=c(0,1)) +
   scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.1))+
   scale_x_continuous(limits = c(0,1), breaks = seq(0,1,1))+ 
   theme_bw() +
-  ggtitle('Figure 5: Simple LPM of safety_mission_engagement on hazards_reviewed')
+  ggtitle('Figure 5: Simple LPM of mission on hazards')
 ```
 
 The next 3 LPM models (found in the [analysis R script](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/blob/master/Task3_Term-Project-Analysis/codes/analyze_data.R)) each add a new explantory variable used with the as.factor() function R to create dummy variables. The richest model, the 4th one, takes the form of regressing safety_mission_engagement on safe_office, hazards_reviewed and office_familiar_risks, thus containing all the variables of choice. This one also has the largest R-squared, which, even though not interpretable, means that it becomes the model of choice.
@@ -203,7 +203,7 @@ ggplot(data = office) +
   labs(x = "Predicted probability of respondent safety mission engagement (LPM)", y="Predicted probability")+
   scale_y_continuous(expand = c(0.00,0.0), limits = c(0.3,1), breaks = seq(0,1,0.1)) +
   scale_x_continuous(expand = c(0.00,0.0), limits = c(0.3,1), breaks = seq(0,1,0.1)) +
-  scale_color_manual(name = "", values=c("green", "red","blue"))+
+  scale_color_manual(name = "", values=c("green", "red3","blue"))+
   theme(legend.position=c(0.55,0.08),
         legend.direction = "horizontal",
         legend.text = element_text(size = 7))+ 
@@ -226,8 +226,8 @@ ggplot(data = office,aes(x=pred1)) +
   geom_histogram(data=subset(office[office$mission == 0, ]), 
                  aes(fill=as.factor(mission), color=as.factor(mission), y = (..count..)/sum(..count..)*100), 
                  binwidth = 0.05, boundary=0, alpha=0) +
-  scale_fill_manual(name="", values=c("0" = "white", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
-  scale_color_manual(name="", values=c("0" = "blue", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_fill_manual(name="", values=c("0" = "white", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_color_manual(name="", values=c("0" = "blue3", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
   ylab("Percent") +
   xlab("Fitted values") +
   scale_x_continuous(expand=c(0.01,0.01) ,limits = c(0,1), breaks = seq(0,1,0.2)) +
@@ -245,8 +245,8 @@ ggplot(data = office,aes(x=pred_logit)) +
   geom_histogram(data=subset(office[office$mission == 0, ]), 
                  aes(fill=as.factor(mission), color=as.factor(mission), y = (..count..)/sum(..count..)*100), 
                  binwidth = 0.05, boundary=0, alpha=0) +
-  scale_fill_manual(name="", values=c("0" = "white", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
-  scale_color_manual(name="", values=c("0" = "blue", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_fill_manual(name="", values=c("0" = "white", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_color_manual(name="", values=c("0" = "blue3", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
   ylab("Percent") +
   xlab("Fitted values") +
   scale_x_continuous(expand=c(0.01,0.01) ,limits = c(0,1), breaks = seq(0,1,0.2)) +
@@ -274,6 +274,8 @@ As such, office employees in the context of this study that answer that they bel
 ## Robustness check
 
 As a final step of this study, a series of robustness checks was conducted on the test sample of the data that was created as a 25% representative sample of the original office data. The summary statistics (appendix A.6.1) of the test sample predicted values appear very similar to their counterparts in the training sample (appendix A.4.1). The calibration curve of the logit model run on the test data (appendix A.6.2) shows less calibration, while the comparison between distribution of logit predicted probabilities by outcome on each of the samples shows a distribution on the test sample much more similar to the original simple LPM naive model, rather than the richer logit model. As a last robustness check, it appears that, while not all of the coefficients have retained their significance level, most of the test sample coefficients are within 2 standard errors away from their counterparts in the training sample. On a concluding remark, perhaps taking a 25% test sample of a sample already 95%-dominated by "yes" mission statement engagement answers has made the few influential points too far and few.
+
+\newpage
 
 # Appendix A
 
@@ -397,9 +399,9 @@ calibration_d <- actual_vs_predicted %>%
                    num_obs = n())
 
 ggplot( calibration_d,aes(x = mean_actual, y = mean_predicted)) +
-  geom_point( color='red', size=1.5, alpha=0.8) +
-  geom_line(  color='red', size=1  , alpha=0.8) +
-  geom_abline( intercept = 0, slope = 1, color='blue') +
+  geom_point( color='red3', size=1.5, alpha=0.8) +
+  geom_line(  color='red3', size=1  , alpha=0.8) +
+  geom_abline( intercept = 0, slope = 1, color='blue3') +
   labs( x = "Actual event probability", y = "Predicted event probability") +
   scale_x_continuous(expand = c(0.01,0.01), limits = c(0.5,1), breaks = seq(0,1,0.1)) +
   scale_y_continuous(expand = c(0.01,0.01), limits = c(0.5,1), breaks = seq(0,1,0.1))+ 
@@ -451,9 +453,9 @@ calibration_d_test <- actual_vs_predicted_test %>%
                    num_obs = n())
 
 ggplot( calibration_d_test,aes(x = mean_actual, y = mean_predicted)) +
-  geom_point( color='red', size=1.5, alpha=0.8) +
-  geom_line(  color='red', size=1  , alpha=0.8) +
-  geom_abline( intercept = 0, slope = 1, color='blue') +
+  geom_point( color='red3', size=1.5, alpha=0.8) +
+  geom_line(  color='red3', size=1  , alpha=0.8) +
+  geom_abline( intercept = 0, slope = 1, color='blue3') +
   labs( x = "Actual event probability", y = "Predicted event probability") +
   scale_x_continuous(expand = c(0.01,0.01), limits = c(0.5,1), breaks = seq(0,1,0.1)) +
   scale_y_continuous(expand = c(0.01,0.01), limits = c(0.5,1), breaks = seq(0,1,0.1))+ 
@@ -470,8 +472,8 @@ ggplot(data = office,aes(x=pred_logit)) +
   geom_histogram(data=subset(office[office$mission == 0, ]), 
                  aes(fill=as.factor(mission), color=as.factor(mission), y = (..count..)/sum(..count..)*100), 
                  binwidth = 0.05, boundary=0, alpha=0) +
-  scale_fill_manual(name="", values=c("0" = "white", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
-  scale_color_manual(name="", values=c("0" = "blue", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_fill_manual(name="", values=c("0" = "white", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_color_manual(name="", values=c("0" = "blue3", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
   ylab("Percent") +
   xlab("Fitted values") +
   scale_x_continuous(expand=c(0.01,0.01) ,limits = c(0,1), breaks = seq(0,1,0.2)) +
@@ -491,8 +493,8 @@ ggplot(data = office_test,aes(x=pred_logit)) +
   geom_histogram(data=subset(office_test[office_test$mission == 0, ]), 
                  aes(fill=as.factor(mission), color=as.factor(mission), y = (..count..)/sum(..count..)*100), 
                  binwidth = 0.05, boundary=0, alpha=0) +
-  scale_fill_manual(name="", values=c("0" = "white", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
-  scale_color_manual(name="", values=c("0" = "blue", "1" = "red"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_fill_manual(name="", values=c("0" = "white", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
+  scale_color_manual(name="", values=c("0" = "blue3", "1" = "red3"),labels=c("Not engaged in safety mission","Respondent engaged in safety mission")) +
   ylab("Percent") +
   xlab("Fitted values") +
   scale_x_continuous(expand=c(0.01,0.01) ,limits = c(0,1), breaks = seq(0,1,0.2)) +
@@ -517,3 +519,4 @@ ss_0s_test <- sum_stat(ss_0_test,"pred_logit",
 knitr::kable(ss_1s_test, caption = "A.6.5: Test sample - Outcome conditional ('yes') summary statistics for the predicted values of models of choice")
 knitr::kable(ss_0s_test, caption = "A.6.6: Test sample - Outcome conditional ('no') summary statistics for the predicted values of models of choice")
 ```
+
