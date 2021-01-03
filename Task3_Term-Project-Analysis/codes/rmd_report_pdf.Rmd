@@ -1,0 +1,122 @@
+---
+title: "DA2 Term Project - Survey Analysis"
+author: "Cosmin Catalin Ticu"
+date: "1/3/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Clear memory
+rm(list=ls())
+# Packages to use
+library(tidyverse)
+# For scaling ggplots
+require(scales)
+# Estimate piecewise linear splines
+#install.packages("lspline")
+library(lspline)
+# Estimate robust SE
+#install.packages("estimatr")
+library(estimatr)
+# Compare models with robust SE
+#install.packages("texreg")
+library(texreg)
+# For different themes
+#install.packages(ggthemes)
+library(ggthemes)
+library(mfx)
+library(margins)
+library(pscl)
+library(modelsummary)
+library(stargazer)
+# install.packages("caTools")
+library(caTools)
+```
+
+# Executive Summary
+
+The aim of this study...
+
+```{r, include=FALSE}
+# Call the data
+w_dir <- "C:/Users/cosmi/Documents/homework_codesANDmore_Coding1_MScBA/Task3_Term-Project-Analysis/"
+office_OG <- read.csv(paste0(w_dir,"data/clean/office_survey_data.csv"))
+
+# Split office data into train and test samples for robustness check at the end
+set.seed(123)
+sample <- sample.split(office_OG, SplitRatio = 0.75)
+office <- subset(office_OG, sample == TRUE)
+office_test <- subset(office_OG, sample == FALSE)
+
+# Call a summary statistic function from a file:
+source(paste0(w_dir,'/codes/sum_stat.R'))
+```
+
+# Introduction - Purpose & Rationale
+
+The purpose of this study is to inspect the pattern of association between employees' perception of safety factors within their workspaces and how engaged they feel to their respective corporate safety missions, which ideally serve the purpose of protecting them and providing regulations for safe behavior. This safety is understood as a factor of incidents. Understood broadly, it refers to factors such as knowledge of fire escapes, injuries in the workplace, employee group behavior, knowledge of what to do during a crisis situation, etc. With an identified pattern of association, the ultimate goal of the study is to build a predictive statistical model which can allow us to estimate the trust or engagement of an employee into the safety measures preached by their employer. This can be extremely useful for companies that want to tackle making their workplaces feel safer to their employees. The research question can be summed up as: What are the factors that impact employees' engagement in corporate safety missions and how can we predict whether an employee will be engaged or not?
+
+## Data collection
+
+With the broad research idea in mind, the data for this study comes from a Fortune 100 global company in the form of a safety survey conducted on over 5000 employees in different working environments (from offices to manufacturing and services). The original survey contains answers to questions pertaining to employee safety within all the working environments (the original data with questions can be found [here](https://github.com/cosmin-ticu/homework_codesANDmore_Coding1_MScBA/blob/master/Task3_Term-Project-Analysis/data/original_survey_data.xlsx)).
+
+# The data itself & selection
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, out.width='50%'}
+# Descriptive statistics (bar charts) of variables of interest
+ggplot(office) +
+  geom_bar(aes(x = office_safety_mission_engagement))+ 
+  theme_bw() +
+  ggtitle('Figure 1: Distribution of safety mission engagement answers')+
+  theme(plot.title = element_text(size = 16))+
+  labs(x = "Respondent feels engaged in the corporate safety mission",y = "Count of answers")
+ggplot(office) +
+  geom_bar(aes(x = safe_office))+ 
+  theme_bw() +
+  ggtitle('Figure 2: Distribution of office safety answers')+
+  theme(plot.title = element_text(size = 16))+
+  labs(x = "Respondent answers whether their office is safe",y = "Count of answers")
+ggplot(office) +
+  geom_bar(aes(x = office_familiar_risks))+ 
+  theme_bw() +
+  ggtitle('Figure 3: Distribution of office risks familiarity answers')+
+  theme(plot.title = element_text(size = 16))+
+  labs(x = "Respondent is familiar with their office's risks",y = "Count of answers")
+ggplot(office) +
+  geom_bar(aes(x = office_hazards_reviewed))+ 
+  theme_bw() +
+  ggtitle('Figure 4: Distribution of office hazard review answers')+
+  theme(plot.title = element_text(size = 16))+
+  labs(x = "Respondent has reviewed the hazards in their office",y = "Count of answers")
+```
+
+
+# Analysis and modelling
+
+# Model of choice
+
+## Robustness checks
+
+# Appendix A
+
+This appendix serves the purpose of storing and displaying tables, charts, graphs and model comparisons, all of which supplement the main body of this text. References to the appendix can be found throughout the study.
+
+## A.1: Descriptive Statistics
+
+```{r, echo=FALSE}
+# Make descriptive statistics for selected office variables
+desc_stat_office <- sum_stat( office , var_names = c('yes_safe_office','no_safe_office','noresponse_safe_office','hazards','mission'),
+                       stats = c('mean','median','min','max','sd') ) # likert scale variables are ignored for this
+knitr::kable(desc_stat_office, caption = "A.1.1: Descriptive statistics of the chosen variables in the office-side survey")
+
+desc_office_risks <- table(office$office_familiar_risks)
+knitr::kable(desc_office_risks, caption = "A.1.2: Frequency distribution of the office risks familiarity variable (Likert scale)")
+```
+
+
+
+
+
+
+
